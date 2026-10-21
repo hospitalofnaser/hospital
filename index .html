@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بنك معلومات ملاكات مستشفى النسائية والأطفال</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --navy-dark: #0b2545;
+            --navy-primary: #13315c;
+            --navy-light: #1e467a;
+            --emerald-num: #198754;
+            --bg-light: #f4f6f9;
+            --border-color: #dce3ec;
+            --row-selected: #d0e2ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: #e9eef5;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .app-window {
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 2px solid var(--navy-dark);
+            box-shadow: 0 10px 30px rgba(11, 37, 69, 0.18);
+        }
+
+        .top-title-bar {
+            background: linear-gradient(90deg, #0b2545 0%, #13315c 50%, #0b2545 100%);
+            color: #ffffff;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            position: relative;
+        }
+
+        .hospital-corner-badge {
+            background: linear-gradient(180deg, #0b2545 0%, #112d52 100%);
+            color: #ffffff;
+            border-bottom-left-radius: 22px;
+            padding: 12px 16px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: -4px 4px 12px rgba(11, 37, 69, 0.15);
+            min-width: 170px;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .kpi-card:hover {
+            border-color: #93c5fd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(19, 49, 92, 0.08);
+        }
+
+        .kpi-card.active-kpi {
+            border: 2px solid var(--navy-primary);
+            background-color: #f8fbff;
+        }
+
+        .cat-tab {
+            background: #ffffff;
+            color: var(--navy-dark);
+            border: 1px solid #d8e0ea;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+
+        .cat-tab:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .cat-tab.active {
+            background: var(--navy-dark);
+            color: #ffffff;
+            border-color: var(--navy-dark);
+            box-shadow: 0 3px 8px rgba(11, 37, 69, 0.25);
+        }
+
+        .panel-box {
+            background: #ffffff;
+            border: 1px solid #dbe2ea;
+            border-radius: 10px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .panel-header {
+            background: var(--navy-dark);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            letter-spacing: 0.2px;
+        }
+
+        .form-row-item {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .form-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #f9fafb;
+            border: 1px solid #d1d9e4;
+            border-radius: 5px;
+            padding: 4px 8px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: #0f172a;
+            text-align: center;
+            transition: all 0.15s ease;
+            height: 31px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            background: #ffffff;
+            border-color: var(--navy-primary);
+            box-shadow: 0 0 0 2px rgba(19, 49, 92, 0.15);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+        }
+
+        .data-table th {
+            background: #f1f5f9;
+            color: var(--navy-dark);
+            font-weight: 700;
+            padding: 6px 8px;
+            border: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .data-table td {
+            padding: 5px 8px;
+            border: 1px solid #edf2f7;
+            text-align: center;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .data-table tbody tr {
+            cursor: pointer;
+            transition: background 0.12s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: #eff6ff;
+        }
+
+        .data-table tbody tr.selected-row {
+            background: var(--row-selected) !important;
+            color: var(--navy-dark);
+            font-weight: 700;
+        }
+
+        .action-btn {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--navy-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .action-btn:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Print View Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printArea, #printArea * {
+                visibility: visible;
+            }
+            #printArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: block !important;
+                background: white;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-window">
+    <!-- Top Window & Header Section -->
+    <div>
+        <!-- Dark Navy Title Bar -->
+        <header class="top-title-bar">
+            <div class="flex items-center gap-2">
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVFileUpload(event)">
+                <button id="importCsvBtn" onclick="document.getElementById('csvFileInput').click()" class="text-xs bg-emerald-700 hover:bg-emerald-600 text-white border border-emerald-500 px-2.5 py-1 rounded transition flex items-center gap-1.5" title="رفع ملف ملاك.csv لتحميل كافة السجلات">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>استيراد ملف (ملاك.csv)</span>
+                </button>
+                <span class="text-xs bg-blue-900/80 text-blue-100 border border-blue-700 px-2.5 py-1 rounded flex items-center gap-1.5">
+                    <i class="fa-solid fa-database"></i>
+                    <span id="datasetModeLabel">قاعدة بيانات الملاك</span>
+                </span>
+            </div>
+
+            <h1 class="text-base md:text-xl font-extrabold tracking-wide text-center flex-1">
+                بنك معلومات ملاكات مستشفى النسائية والأطفال
+            </h1>
+
+            <!-- Window Control Icons (Left side in RTL) -->
+            <div class="flex items-center gap-4 text-sm text-gray-200">
+                <span class="cursor-pointer hover:text-white" title="تصغير"><i class="fa-solid fa-minus"></i></span>
+                <span class="cursor-pointer hover:text-white" title="تكبير"><i class="fa-regular fa-square"></i></span>
+                <span onclick="openCloseSystemModal()" class="cursor-pointer hover:text-red-400 transition" title="إغلاق"><i class="fa-solid fa-xmark text-base"></i></span>
+            </div>
+        </header>
+
+        <section class="flex flex-col lg:flex-row items-stretch gap-3 px-3 pt-1 pb-2 bg-[#f8fafc] border-b border-gray-200">
+            <!-- Right Hospital Logo Badge -->
+            <div class="hospital-corner-badge shrink-0">
+                <div class="relative mb-1.5">
+                    <div class="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 shadow-inner">
+                        <i class="fa-solid fa-hospital-user text-3xl text-white"></i>
+                    </div>
+                    <div class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow">
+                        <i class="fa-solid fa-plus text-red-600 text-sm font-black"></i>
+                    </div>
+                </div>
+                <div class="text-sm font-extrabold leading-tight text-white">مستشفى</div>
+                <div class="text-sm font-extrabold leading-tight text-white">النسائية والأطفال</div>
+                <div class="text-[11px] font-medium text-blue-200 mt-1 border-t border-white/15 pt-1 w-full">
+                    بنك معلومات الملاكات
+                </div>
+            </div>
+
+            <!-- 8 KPI Summary Cards Grid (2x4) -->
+            <div id="kpiGridContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 flex-1 py-1">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+
+        <nav class="px-3 py-2 bg-white border-b border-gray-200">
+            <div id="categoryTabsContainer" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </nav>
+    </div>
+
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 px-3 py-2 items-stretch">
+        
+        <!-- RIGHT COLUMN: الإحصائيات التفصيلية (3 cols on lg) -->
+        <section class="lg:col-span-3 panel-box justify-between">
+            <div class="flex flex-col flex-1">
+                <div class="panel-header">الإحصائيات التفصيلية</div>
+                <div class="text-center font-extrabold text-[#0b2545] text-sm mb-1.5">العنوان الوظيفي</div>
+                
+                <!-- Job Titles Breakdown Table -->
+                <div class="border border-gray-200 rounded-md overflow-y-auto max-h-[210px] bg-white">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="w-10">ت</th>
+                                <th>العنوان الوظيفي</th>
+                                <th class="w-16">العدد</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobTitlesTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Department Total Summary -->
+                <div class="text-center font-extrabold text-sm my-2.5 py-1 bg-slate-50 rounded border border-slate-200">
+                    <span class="text-[#0b2545]">إجمالي عدد ملاك قسم <span id="statDeptName">الأطباء</span> : </span>
+                    <span id="statDeptTotal" class="text-red-600 text-base font-black">0</span>
+                </div>
+
+                <!-- Bottom Sub-panel: Employees in Selected Job Title -->
+                <div class="panel-header mt-1 mb-1">
+                    الموظفون (<span id="selectedJobTitleHeader">طبيب اختصاص أطفال</span>)
+                </div>
+                <div class="text-center text-xs font-bold text-slate-600 mb-1.5">
+                    جميع الموظفين بهذا العنوان
+                </div>
+
+                <div class="border border-gray-200 rounded-md overflow-y-auto flex-1 min-h-[175px] max-h-[230px] bg-white">
+                    <ul id="jobTitleEmployeesList" class="divide-y divide-gray-100 text-sm font-semibold text-center">
+                        <!-- Populated dynamically -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTER COLUMN: بيانات الموظف (6 cols on lg) -->
+        <section class="lg:col-span-6 panel-box justify-between">
+            <div>
+                <div class="panel-header flex items-center justify-between px-3">
+                    <span class="text-xs font-normal text-blue-200" id="formModeIndicator">عرض / تعديل موظف</span>
+                    <span>بيانات الموظف</span>
+                    <span class="text-xs font-normal text-emerald-300" id="currentEmpBadge">الرقم: 10025</span>
+                </div>
+
+                <form id="employeeForm" onsubmit="event.preventDefault(); saveEmployee();" class="mt-1">
+                    <!-- 2-Column Form Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-0.5 px-1">
+                        
+                        <!-- RIGHT FORM COLUMN (10 Fields) -->
+                        <div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="empId">الرقم الوظيفي</label>
+                                <input type="text" id="empId" class="form-input font-bold text-[#0b2545]" placeholder="مثال: 10025" required>
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="fullName">اسم الموظف الرباعي</label>
+                                <input type="text" id="fullName" class="form-input" placeholder="الاسم الرباعي واللقب" required>
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="motherName">اسم الام الثلاثي</label>
+                                <input type="text" id="motherName" class="form-input" placeholder="اسم الأم الثلاثي">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="gender">الجنس</label>
+                                <select id="gender" class="form-input cursor-pointer">
+                                    <option value="ذكر">ذكر</option>
+                                    <option value="أنثى">أنثى</option>
+                                </select>
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="birthDate">تاريخ التولد</label>
+                                <input type="date" id="birthDate" class="form-input">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="governorate">محل السكن (المحافظة)</label>
+                                <input type="text" id="governorate" list="governoratesList" class="form-input" placeholder="المحافظة">
+                                <datalist id="governoratesList">
+                                    <option value="بغداد">
+                                    <option value="كركوك">
+                                    <option value="البصرة">
+                                    <option value="نينوى">
+                                    <option value="أربيل">
+                                    <option value="النجف">
+                                    <option value="كربلاء">
+                                    <option value="بابل">
+                                    <option value="ديالى">
+                                    <option value="الأنبار">
+                                    <option value="ذي قار">
+                                    <option value="صلاح الدين">
+                                </datalist>
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="nationalId">رقم البطاقة الوطنية</label>
+                                <input type="text" id="nationalId" class="form-input" placeholder="12 رقماً">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="gradDate">تاريخ الحصول على الشهادة</label>
+                                <input type="text" id="gradDate" class="form-input" placeholder="مثال: 2023">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="university">الجهة المانحة للشهادة</label>
+                                <input type="text" id="university" class="form-input" placeholder="الجامعة / المعهد">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label text-emerald-800" for="hireDate">تاريخ التعيين <i class="fa-solid fa-calendar-check text-emerald-600 text-xs"></i></label>
+                                <input type="date" id="hireDate" onchange="updateLeaveBalancePreview()" class="form-input border-emerald-400 bg-emerald-50/40 font-bold" required>
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="position">المنصب</label>
+                                <input type="text" id="position" class="form-input" placeholder="لا يوجد">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="notes">الملاحظات</label>
+                                <input type="text" id="notes" class="form-input" placeholder="-">
+                            </div>
+                        </div>
+
+                        <!-- LEFT FORM COLUMN (10+2 Fields) -->
+                        <div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="category">المهنة (القسم)</label>
+                                <select id="category" onchange="handleCategoryFieldChange()" class="form-input cursor-pointer font-bold text-[#0b2545]">
+                                    <option value="الأطباء">طبيب (الأطباء)</option>
+                                    <option value="أطباء الأسنان">طبيب أسنان (أطباء الأسنان)</option>
+                                    <option value="الصيدلة">صيدلي (الصيدلة)</option>
+                                    <option value="التقنيين">تقني طبي (التقنيين)</option>
+                                    <option value="التمريض">ممرض (التمريض)</option>
+                                    <option value="المهن الصحية">مهن صحية (المهن الصحية)</option>
+                                    <option value="الهندسة">مهندس (الهندسة)</option>
+                                    <option value="الإداريين">إداري (الإداريين)</option>
+                                </select>
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="hierarchyType">نوع التدرج</label>
+                                <input type="text" id="hierarchyType" class="form-input" placeholder="مثال: صحي / طبي / إداري">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="grade">الدرجة</label>
+                                <input type="text" id="grade" class="form-input" placeholder="مثال: 7">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="stage">المرحلة</label>
+                                <input type="text" id="stage" class="form-input" placeholder="مثال: الثالثة">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="jobTitle">العنوان الوظيفي</label>
+                                <input type="text" id="jobTitle" list="jobTitlesSuggestions" class="form-input font-bold" placeholder="العنوان الوظيفي" required>
+                                <datalist id="jobTitlesSuggestions">
+                                    <option value="طبيب اختصاص أطفال">
+                                    <option value="جراحة أطفال">
+                                    <option value="أشعة تشخيصية وسونار">
+                                    <option value="طب الأسرة">
+                                    <option value="طبيب مقيم">
+                                    <option value="جراحة عامة">
+                                    <option value="طبيب أسنان ممارس">
+                                    <option value="صيدلي أقدم">
+                                    <option value="تقني تحليلات مرضية">
+                                    <option value="ممرض جامعي">
+                                    <option value="معاون طبي">
+                                    <option value="مهندس أجهزة طبية">
+                                    <option value="ملاحظ إداري">
+                                </datalist>
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="specialtyBranch">فرع الاختصاص</label>
+                                <input type="text" id="specialtyBranch" class="form-input" placeholder="فرع الاختصاص">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="subSpecialty">الاختصاص الدقيق</label>
+                                <input type="text" id="subSpecialty" class="form-input" placeholder="الاختصاص الدقيق">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="assignedDept">موزع بعد الاختصاص</label>
+                                <input type="text" id="assignedDept" class="form-input" placeholder="القسم / الردهة">
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="staffType">نوع الملاك</label>
+                                <select id="staffType" class="form-input cursor-pointer">
+                                    <option value="من ملاكات وزارة الصحة">من ملاكات وزارة الصحة</option>
+                                    <option value="دائم">دائم</option>
+                                    <option value="عقد">عقد</option>
+                                </select>
+                            </div>
+                            <div class="form-row-item">
+                                <label class="form-label" for="empStatus">حالة الموظف</label>
+                                <select id="empStatus" class="form-input cursor-pointer">
+                                    <option value="مستمر بالخدمة">مستمر بالخدمة</option>
+                                    <option value="اجازة دراسية">اجازة دراسية</option>
+                                    <option value="اجازة امومة">اجازة امومة</option>
+                                    <option value="منسب الى مؤسسة داخل الدائرة">منسب الى مؤسسة داخل الدائرة</option>
+                                    <option value="منسب الى مؤسسة خارج الدائرة">منسب الى مؤسسة خارج الدائرة</option>
+                                    <option value="مستمر">مستمر</option>
+                                    <option value="مجاز">مجاز</option>
+                                    <option value="منسب">منسب</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Leave Balance Section (رصيد الإجازات) -->
+                    <div class="mt-2 mx-1 p-2.5 rounded-lg bg-gradient-to-l from-[#f0fdf4] via-[#f8fafc] to-[#eff6ff] border-2 border-[#198754]/40 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-200/80 pb-1.5 mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-md bg-[#198754] text-white flex items-center justify-center text-sm shadow-sm">
+                                    <i class="fa-solid fa-calendar-plus"></i>
+                                </span>
+                                <div>
+                                    <h3 class="text-xs font-extrabold text-[#0b2545] leading-tight">رصيد الإجازات التراكمي التلقائي</h3>
+                                    <p class="text-[11px] text-slate-600 font-semibold">يُحتسب (3 نقاط / يوم) تلقائياً عن كل شهر مكتمل منذ تاريخ التعيين</p>
+                                </div>
+                            </div>
+
+                            <!-- Accrual Breakdown Badges -->
+                            <div class="flex items-center gap-1.5 text-xs font-bold">
+                                <span class="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700" title="عدد الأشهر الكاملة منذ تاريخ التعيين">
+                                    الأشهر: <strong id="leaveMonthsElapsed" class="text-[#0b2545]">0</strong> شهر
+                                </span>
+                                <span class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-800" title="الرصيد الكلي المكتسب = الأشهر × 3">
+                                    المكتسب: <strong id="leaveTotalEarned">0</strong>
+                                </span>
+                                <span class="px-2 py-0.5 rounded bg-red-50 border border-red-200 text-red-700" title="مجموع النقاط/الأيام المخصومة">
+                                    المستهلك: <strong id="leaveDeductedDisplay">0</strong>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Available Balance & Manual Deduction Controls -->
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <!-- Current Available Balance Box -->
+                            <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-emerald-300 shadow-inner">
+                                <span class="text-xs font-extrabold text-slate-700">الرصيد المتبقي الحقيقي:</span>
+                                <span id="leaveNetAvailable" class="text-lg font-black text-[#198754] px-2 py-0.5 rounded bg-emerald-50">0</span>
+                                <span class="text-xs font-bold text-emerald-700">نقطة (يوم)</span>
+                            </div>
+
+                            <!-- Deduction Controls -->
+                            <div class="flex items-center flex-wrap gap-1.5">
+                                <button type="button" onclick="applyLeaveDeduction(1)" class="px-2.5 py-1 rounded bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition flex items-center gap-1" title="خصم نقطة واحدة (يوم واحد) فوراً">
+                                    <i class="fa-solid fa-minus"></i>
+                                    <span>-1 يوم</span>
+                                </button>
+
+                                <div class="flex items-center bg-white border border-slate-300 rounded overflow-hidden">
+                                    <input type="number" id="customDeductInput" min="1" max="365" value="3" class="w-14 text-center text-xs font-bold py-1 focus:outline-none" placeholder="خصم">
+                                    <button type="button" onclick="applyCustomLeaveDeduction()" class="bg-[#0b2545] hover:bg-[#13315c] text-white text-xs font-bold px-2.5 py-1 transition">
+                                        تطبيق الخصم
+                                    </button>
+                                </div>
+
+                                <button type="button" onclick="resetLeaveDeductions()" class="px-2 py-1 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition" title="تصفير الخصومات المستهلكة لهذا الموظف">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- LEFT COLUMN: البحث عن موظف ونتائج البحث (3 cols on lg) -->
+        <section class="lg:col-span-3 panel-box justify-between">
+            <div class="flex flex-col flex-1">
+                <div class="panel-header">البحث عن موظف</div>
+
+                <div class="px-1 space-y-2 mb-3">
+                    <div>
+                        <label for="searchType" class="block text-xs font-bold text-slate-700 mb-1 text-right">نوع البحث</label>
+                        <select id="searchType" onchange="handleSearchTypeChange()" class="form-input cursor-pointer font-bold text-[#0b2545]">
+                            <option value="name">اسم الموظف</option>
+                            <option value="id">الرقم الوظيفي</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label for="searchInput" class="text-xs font-bold text-slate-700">كلمة البحث</label>
+                            <label class="flex items-center gap-1 text-[11px] font-semibold text-slate-600 cursor-pointer">
+                                <input type="checkbox" id="searchAllDeptsCheckbox" checked onchange="executeSearch()" class="rounded text-[#0b2545]">
+                                <span>بحث في كل الأقسام</span>
+                            </label>
+                        </div>
+                        <input type="text" id="searchInput" oninput="executeSearch()" onkeydown="if(event.key==='Enter') executeSearch()" class="form-input text-right pr-2.5" placeholder="اكتب اسم الموظف هنا...">
+                    </div>
+
+                    <!-- Search & Reset Buttons -->
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button type="button" onclick="executeSearch()" class="bg-[#0b2545] hover:bg-[#13315c] text-white font-bold text-sm py-1.5 px-3 rounded-md flex items-center justify-center gap-2 shadow-sm transition">
+                            <span>بحث</span>
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </button>
+                        <button type="button" onclick="resetSearch()" class="bg-slate-100 hover:bg-slate-200 text-[#0b2545] border border-slate-300 font-bold text-sm py-1.5 px-3 rounded-md flex items-center justify-center gap-2 transition">
+                            <span>إعادة</span>
+                            <i class="fa-solid fa-rotate-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search Results Header -->
+                <div class="panel-header mb-1.5">
+                    نتائج البحث ( <span id="searchResultsCount">0</span> )
+                </div>
+
+                <!-- Search Results Table Container -->
+                <div class="border border-gray-200 rounded-md overflow-y-auto flex-1 min-h-[240px] max-h-[310px] bg-white">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="w-10">ت</th>
+                                <th>اسم الموظف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="searchResultsTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center text-xs font-bold text-[#0b2545] mt-2 py-1 bg-blue-50/60 rounded border border-blue-100">
+                    دبل كلك (أو نقرة) على اسم الموظف لعرض البيانات
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Action Bar & Footer -->
+    <div>
+        <!-- 6 Action Buttons Bar -->
+        <section class="px-4 py-2.5 bg-white border-t border-gray-200">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 max-w-6xl mx-auto">
+                <button type="button" onclick="prepareNewEmployee()" class="action-btn">
+                    <i class="fa-solid fa-file-circle-plus text-[#0b2545] text-lg"></i>
+                    <span>جديد</span>
+                </button>
+                <button type="button" onclick="saveEmployee()" class="action-btn border-emerald-300 bg-emerald-50/40 hover:bg-emerald-100/70">
+                    <i class="fa-solid fa-floppy-disk text-emerald-700 text-lg"></i>
+                    <span>حفظ</span>
+                </button>
+                <button type="button" onclick="confirmDeleteEmployee()" class="action-btn hover:bg-red-50 hover:border-red-300">
+                    <i class="fa-solid fa-trash-can text-red-600 text-lg"></i>
+                    <span>حذف</span>
+                </button>
+                <button type="button" onclick="clearFormInputs()" class="action-btn">
+                    <i class="fa-solid fa-eraser text-slate-600 text-lg"></i>
+                    <span>مسح</span>
+                </button>
+                <button type="button" onclick="printEmployeeProfile()" class="action-btn">
+                    <i class="fa-solid fa-print text-[#0b2545] text-lg"></i>
+                    <span>طباعة</span>
+                </button>
+                <button type="button" onclick="openCloseSystemModal()" class="action-btn hover:bg-red-50">
+                    <i class="fa-solid fa-xmark text-red-600 text-xl font-black"></i>
+                    <span>إغلاق</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Dark Navy Footer Bar -->
+        <footer class="bg-[#0b2545] text-white px-4 py-1.5 flex flex-wrap items-center justify-between text-xs font-bold">
+            <!-- Right Side Info -->
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5 text-emerald-400">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>قاعدة البيانات متصلة (حفظ تلقائي)</span>
+                </span>
+                <button onclick="resetToDefaultDatabase()" class="text-blue-200 hover:text-white underline text-[11px]">
+                    استعادة البيانات الافتراضية
+                </button>
+            </div>
+
+            <!-- Left Side Clock & Date -->
+            <div class="flex items-center gap-6 mr-auto">
+                <div class="flex items-center gap-2">
+                    <i class="fa-regular fa-clock text-blue-200"></i>
+                    <span>الوقت:</span>
+                    <span id="liveClockDisplay" dir="ltr" class="font-mono text-sm">03:15:42 م</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-days text-blue-200"></i>
+                    <span>التاريخ:</span>
+                    <span id="liveDateDisplay" dir="ltr" class="font-mono text-sm">03/06/2026</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!-- Toast Notification Container -->
+<div id="toastContainer" class="fixed bottom-12 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- Custom Confirmation Modal -->
+<div id="customModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 animate-fade-in">
+        <div id="modalHeader" class="bg-[#0b2545] text-white px-4 py-3 font-extrabold text-base flex items-center justify-between">
+            <span id="modalTitle">تأكيد الإجراء</span>
+            <button onclick="closeCustomModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-5 text-center">
+            <div id="modalIcon" class="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-3 text-2xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <p id="modalMessage" class="text-slate-700 font-bold text-sm leading-relaxed mb-5"></p>
+            <div class="flex items-center justify-center gap-3">
+                <button id="modalConfirmBtn" class="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition">
+                    نعم، تأكيد
+                </button>
+                <button onclick="closeCustomModal()" class="px-5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Printable Employee Card Area (Hidden on screen, visible on print) -->
+<div id="printArea" class="hidden" dir="rtl"></div>
+
+<script>
+    const CATEGORIES_CONFIG = [
+        { id: 'الأطباء', label: 'الأطباء', professionLabel: 'طبيب', icon: 'fa-solid fa-user-doctor' },
+        { id: 'أطباء الأسنان', label: 'أطباء الأسنان', professionLabel: 'طبيب اسنان', icon: 'fa-solid fa-tooth' },
+        { id: 'الصيدلة', label: 'الصيدلة', professionLabel: 'صيدلي', icon: 'fa-solid fa-capsules' },
+        { id: 'التقنيين', label: 'التقنيين', professionLabel: 'تقني طبي', icon: 'fa-solid fa-microscope' },
+        { id: 'التمريض', label: 'التمريض', professionLabel: 'تمريضي', icon: 'fa-solid fa-user-nurse' },
+        { id: 'المهن الصحية', label: 'المهن الصحية', professionLabel: 'صحي', icon: 'fa-solid fa-heart-pulse' },
+        { id: 'الهندسة', label: 'الهندسة', professionLabel: 'مهندس', icon: 'fa-solid fa-gear' },
+        { id: 'الإداريين', label: 'الإداريين', professionLabel: 'إداري', icon: 'fa-solid fa-folder-open' }
+    ];
+
+    const STORAGE_KEY_EMPLOYEES = 'hospital_staff_db_malak_only_v1';
+
+    function mapProfessionToCategory(rawProfession, jobTitle = '', branch = '') {
+        const p = (rawProfession || '').trim();
+        const jt = (jobTitle || '').trim();
+        const br = (branch || '').trim();
+
+        if (p.includes('اسنان') || p.includes('أسنان') || jt.includes('اسنان') || jt.includes('أسنان')) return 'أطباء الأسنان';
+        if (p === 'طبيب' || p.includes('أطباء') || p.includes('اطباء')) return 'الأطباء';
+        if (p.includes('صيدل')) return 'الصيدلة';
+        if (p.includes('تقني')) return 'التقنيين';
+        if (p.includes('تمريض') || p.includes('ممرض') || p.includes('قابل')) return 'التمريض';
+        if (p.includes('هندس') || p.includes('مهندس') || br.includes('هندس')) return 'الهندسة';
+        if (p.includes('ادار') || p.includes('إدار') || p.includes('حسابات') || p.includes('احصاء') || p.includes('كاتب')) return 'الإداريين';
+        if (p.includes('صحي')) return 'المهن الصحية';
+        return 'المهن الصحية';
+    }
+
+    function inferGenderFromName(fullName, jobTitle = '') {
+        const firstWord = (fullName || '').trim().split(/\s+/)[0] || '';
+        const femaleNames = [
+            'فاطمة', 'سوزان', 'زينب', 'شاناز', 'زبيدة', 'هيلين', 'سارا', 'سارة', 'مروة',
+            'بيداء', 'استبرق', 'هه', 'نور', 'رنا', 'سيران', 'الاء', 'آلاء', 'دلفين',
+            'شهناز', 'ديلان', 'كول', 'جنان', 'ندى', 'افراح', 'أفراح', 'اية', 'آية',
+            'ايمان', 'إيمان', 'دنيز', 'مريم', 'هدى', 'رسل', 'زهراء', 'نضال', 'سعاد'
+        ];
+        if (
+            femaleNames.includes(firstWord) ||
+            jobTitle.includes('طبيبة') ||
+            jobTitle.includes('ممرضة') ||
+            jobTitle.includes('قابلة') ||
+            jobTitle.includes('مقيمة')
+        ) {
+            return 'أنثى';
+        }
+        return 'ذكر';
+    }
+
+    const RAW_MALAK_ROWS = [
+        ["0", "فاطمة محمد عبدالله محمود", "سروة فاتح نصيف", "2002-01-01", "0", "دبلوم فني", "2024", "معهد تقني طبي كركوك", "2024-10-30", "تمريضي", "متدرب", "الدرجة الثامنة", "المرحلة الرابعة", "ممرض فني متدرب", "ممرض فني", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["0", "سوزان عبدالله قادر عبدالله", "نوروز نجم الدين محمدامين", "2003-01-25", "200361581774", "دبلوم فني", "2023", "معهد تقني كوية", "2024-11-04", "تمريضي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الاولى", "قابلة ماهرة قدمى", "قابلة فنية", "من ملاكات وزارة الصحة", "اجازة دراسية"],
+        ["144449820", "زينب اسماعيل ابراهيم سعيد", "سمية عبدالرحمن سعيد", "1992-01-01", "0", "بكالوريوس", "2016", "جامعة كركوك/كلية الطب", "2017-04-23", "طبيب", "اقامة قدمى", "الدرجة الخامسة", "المرحلة الخامسة", "طبيبة عمومي اقدم", "نسائية وتوليد", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["154397171", "شاناز غفور محمد شاسوار", "نسرين محمد امين عبدالرحمن", "1999-06-27", "199905862913", "بكالوريوس", "2022", "جامعة رابه رين /السليمانية", "2023-12-17", "تمريضي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الاولى", "ممرضة جامعية", "ممرض جامعي", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["0", "داره وان دلشاد جوهر محمد", "بفرا عزيز مولود", "1995-01-01", "199593742032", "دبلوم فني", "2023", "معهد التقني الطبي كركوك", "2024-10-31", "صحي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الاولى", "مساعد صيدلي متدرب", "مساعد صيدلي", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144455984", "صاحب مرهون سالم يوسف", "فطيم احمد عبار", "1972-07-01", "197224987747", "دبلوم فني", "1998", "معهد فني كركوك قسم التمريض", "2012-04-24", "تمريضي", "ممارس", "الدرجة الرابعة", "المرحلة الاولى", "رئيس ممرض فني", "ممرض فني", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["0", "زبيدة قادر محمد خالد", "ايمان حسن جبار", "2002-01-01", "200291085489", "دبلوم فني", "2023", "معهد تقني طبي كركوك", "2024-10-31", "صحي", "متدرب", "الدرجة السابعة", "المرحلة الاولى", "مساعد صيدلي متدرب", "مساعد صيدلي", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["0", "زينب محمد جمعة حميد", "فاطمة نورالدين علي", "1999-01-01", "0", "بكالوريوس", "2023", "جامعة الكتاب", "2024-10-22", "تقني طبي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الاولى", "تقني تخدير", "تقنيات تخدير", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["154442864", "هيلين كنعان علي محمد", "نازلين جواد حمه خان", "2003-01-16", "200339082172", "دبلوم فني", "2022", "معهد تقني جمجمال", "2023-11-29", "تمريضي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الاولى", "ممرضة فنية", "ممرض فني", "من ملاكات وزارة الصحة", "اجازة امومة"],
+        ["0", "سارا طارق حمه قادر", "بيان نوري محمد", "2003-07-15", "200317036667", "دبلوم فني", "2023", "معهد تقني جمجمال", "2024-11-04", "تمريضي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الاولى", "ممرضة فنيه متدربة", "ممرض فني", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["0", "مروة حسام محمد زيدان", "خالدة قاسم محمد", "1991-08-24", "199119333925", "بكالوريوس", "2013", "الجامعة المستنصرية بغداد", "2023-01-22", "صحي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الثانية", "معاون باحث صحة بيئة", "الهندسة البيئية", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144493319", "علي خلف سالم محمود", "فوزية عبدالله محمود", "1982-02-12", "198296350085", "دبلوم عالي", "2019", "وزارة الصحة اقليم كردستان", "2007-04-17", "طبيب", "اختصاص", "الدرجة الاولى", "المرحلة الثالثة", "رئيس أطباء اختصاص", "اشعة تشخيصية وسونار", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["0", "عبدالله ابراهيم خليل حديد", "مجود عبد جاسم", "2000-01-01", "200042444583", "بكالوريوس", "2023", "جامعة الكتاب", "2024-10-22", "تقني طبي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الاولى", "تقني طبي تخدير متدرب", "تقنيات تخدير", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144443950", "بيداء عبدالعزيز سلمان شلال", "انتصار ربيع جمعة", "1982-01-01", "0", "دبلوم عالي", "2018", "كلية الطب جامعة النهرين", "2006-01-08", "طبيب", "اختصاص", "الدرجة الاولى", "المرحلة الاولى", "نسائية وتوليد", "نسائية وتوليد", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["148036392", "استبرق باسم محمد رزاق", "سعدية خلف وكاع", "1996-07-10", "199663772255", "بكالوريوس", "2019", "جامعة كركوك كلية طب الاسنان", "2021-05-06", "طبيب اسنان", "ممارس", "الدرجة الخامسة", "المرحلة الثالثة", "طبيب اسنان", "طبيب اسنان عام", "من ملاكات وزارة الصحة", "اجازة دراسية"],
+        ["144539121", "هه لاله محمد قادر حسن", "نجيبة صديق محمد", "1990-01-01", "0", "بكالوريوس", "2017", "جامعة تكريت", "2018-05-18", "طبيب", "اقامة قدمى", "الدرجة الرابعة", "المرحلة الاولى", "مقيم اقدم", "التخدير والعناية المركزة", "من ملاكات وزارة الصحة", "اجازة امومة"],
+        ["144434884", "نور صباح حسين سلمان", "اشواق محمد ياسين سمين", "1995-06-06", "199505456071", "بكالوريوس", "2018", "كلية صفوة الجامعة", "2019-02-26", "صيدلي", "ممارس", "الدرجة الرابعة", "المرحلة الاولى", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["148041325", "بيشوا محمد حمة رفيق محمد سعيد", "بدرية حسين كاكه من", "1991-10-21", "199191069350", "بكالوريوس", "2019", "جامعة راجيف غاندي الهند", "2021-05-04", "صيدلي", "ممارس", "الدرجة السادسة", "المرحلة الثالثة", "صيدلي سريري", "صيدلة سريرية", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144509661", "اشرف عصمت جليل خليل", "ناهدة محمود حسن", "1980-03-04", "198035412870", "بورد عراقي", "2014", "المجلس العراقي للاختصاصات الطبية", "2015-03-04", "طبيب", "اختصاص", "الدرجة الاولى", "المرحلة الثالثة", "طبيب اختصاص اطفال", "طب الاطفال خدج وحديثي الولادة", "من ملاكات وزارة الصحة", "منسب الى مؤسسة داخل الدائرة"],
+        ["144448690", "رنا خالد محمد امين", "الهام عزالدين سليمان", "1992-05-16", "199260006520", "بكالوريوس", "2016", "كلية الرافدين", "2017-09-13", "صيدلي", "ممارس", "الدرجة السادسة", "المرحلة الخامسة", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144430837", "محمد سلمان عبدالله سليم", "خديجة عبدالهادي محمد", "1993-09-16", "199374690509", "بكالوريوس", "2017", "جامعة راجيف غاندي الهند", "2020-01-21", "صيدلي", "ممارس", "الدرجة الخامسة", "المرحلة الثالثة", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "منسب الى مؤسسة داخل الدائرة"],
+        ["144508415", "احمد خليل نامق عبدالله", "كولسر داود سعيد", "1993-08-26", "199306342462", "بكالوريوس", "2017", "جامعة فيلادليفا الاردن", "2020-01-21", "صيدلي", "ممارس", "الدرجة الخامسة", "المرحلة الثالثة", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144533855", "محمد تحسين درويش جبرائيل", "الهام جليل محمد", "1981-09-22", "198118943766", "بكالوريوس", "2007", "جامعة بغداد", "2007-09-12", "صيدلي", "ممارس", "الدرجة الثالثة", "المرحلة الاولى", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144548099", "حردان عادل صالح عادل", "نادرة رشيد محمد", "1993-05-17", "199389032016", "بكالوريوس", "2017", "جامعة الموصل", "2017-04-26", "صيدلي", "ممارس", "الدرجة الخامسة", "المرحلة الخامسة", "صيدلي اقدم", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144540532", "احمد سامي هندي محمد", "خديجة ابراهيم عبدالله", "1995-08-18", "199562190158", "بكالوريوس", "2018", "جامعة فيلادليفا الاردن", "2020-01-21", "صيدلي", "ممارس", "الدرجة الخامسة", "المرحلة الثالثة", "صيدلاني ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144454080", "سيف صلاح نوري احمد", "مديحه محمد يعقوب", "1988-01-01", "0", "بورد عراقي", "2013", "جامعة كركوك كلية الطب", "2014-03-23", "طبيب", "اختصاص", "الدرجة الثالثة", "المرحلة الاولى", "طب الاطفال الخدج", "طب الاطفال خدج وحديثي الولادة", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144453623", "سيران عطاالله فائق نامق", "سعدية جلال توفيق", "1974-02-18", "197464299536", "بورد عراقي", "2008", "المجلس العراقي للاختصاصات الطبية", "1998-09-28", "طبيب", "اختصاص", "الدرجة الاولى", "المرحلة الحادية عشر", "طبيب استشاري", "طب الاطفال خدج وحديثي الولادة", "من ملاكات وزارة الصحة", "اجازة دراسية"],
+        ["144499700", "مروة عزالدين احمد صديق", "شنكول غازي شاكر", "1994-01-30", "199499197950", "بكالوريوس", "2019", "جامعة كركوك كلية الطب", "2020-09-22", "طبيب", "اقامة قدمى", "الدرجة الخامسة", "المرحلة الثانية", "مقيمة قدمى جراحة الاطفال", "جراحة اطفال", "من ملاكات وزارة الصحة", "اجازة امومة"],
+        ["0", "الاء سيروان يوسف رضا", "مهابات عبدالله فقي صالح", "1996-09-20", "199641499266", "بكالوريوس", "2019", "جامعة هولير", "2021-06-27", "صيدلي", "ممارس", "الدرجة السادسة", "المرحلة الرابعة", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144548833", "حسنين فواز جابر مهدي", "اميرة عطية عبدالامير", "1992-02-22", "199210459672", "بكالوريوس", "2019", "جامعة القادسية", "2018-07-30", "صيدلي", "ممارس", "الدرجة الخامسة", "المرحلة الرابعة", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["0", "دلفين بهروز علي الماس", "بخشان حيدر محمد", "2004-01-01", "200410503446", "دبلوم فني", "2023", "معهد تقني كركوك", "2024-10-30", "تمريضي", "غير موزع للتدرج", "الدرجة السابعة", "المرحلة الاولى", "ممرض فني متدرب", "ممرض فني", "من ملاكات وزارة الصحة", "اجازة دراسية"],
+        ["144523843", "شهناز ماجد كريم محمد", "سوزان محمد ابراهيم", "1995-01-01", "0", "بكالوريوس", "2019", "جامعة كركوك كلية الطب", "2020-09-22", "طبيب", "اقامة قدمى", "الدرجة الخامسة", "المرحلة الثانية", "طبيب مقيم اقدم", "نسائية وتوليد", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144550177", "ديلان عبدالحميد محمد عبدالمجيد", "لميعه مصطفى احمد", "1985-09-04", "198500448836", "بكالوريوس", "2009", "جامعة الموصل كلية الصيدلة", "2010-01-27", "صيدلي", "ممارس", "الدرجة الثانية", "المرحلة الاولى", "صيدلي اختصاص", "صيدلة سريرية", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["148060461", "مصطفى محمد اسعد حسين", "كلر صديق مصطفى", "1996-01-01", "199665362376", "بكالوريوس", "2018", "جامعة اجاريا عرجونه الهند", "2021-06-21", "صيدلي", "ممارس", "الدرجة السادسة", "المرحلة الرابعة", "صيدلي عمومي", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["148053119", "علاء موفق حسن محمد", "سيوكيل احسان هادي", "1994-02-27", "199465887634", "بكالوريوس", "2019", "جامعة اجارا نكرجونا الهند", "2021-05-04", "صيدلي", "ممارس", "الدرجة الخامسة", "المرحلة الاولى", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144463073", "كول اميد عباس حسين", "كولر عبدالله عمر", "1987-01-01", "0", "بورد عربي", "2021", "المجلس العربي للاختصاصات الصحية", "2012-03-11", "طبيب", "اختصاص", "الدرجة الثالثة", "المرحلة الاولى", "دكتوراه النسائيه والتوليد", "نسائية وتوليد", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144514173", "جنان فتحي محمد احمد", "حربية محمد حسين", "1964-01-01", "0", "بكالوريوس", "1989", "جامعة صلاح الدين كلية الطب", "1990-09-03", "طبيب", "ممارس", "الدرجة الاولى", "المرحلة الخامسة", "التخدير والعناية المركزة", "التخدير والعناية المركزة", "من ملاكات وزارة الصحة", "اجازة دراسية"],
+        ["144536461", "ندى يونس محمود ياسين", "نجمة محمد عبدالله", "1991-01-01", "0", "بكالوريوس", "2017", "جامعة تكريت كلية الطب", "2018-05-14", "طبيب", "دوري", "الدرجة الرابعة", "المرحلة الاولى", "طبيب مقيم دوري", "طبيب دوري", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144459254", "عدنان عجاج شوان طه", "علية عيسى زركان", "1982-01-01", "198249055830", "بكالوريوس", "2005", "جامعة بغداد كلية الصيدلة", "2006-04-13", "صيدلي", "ممارس", "الدرجة الثالثة", "المرحلة الخامسة", "رئيس صيادلة اقدم", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["148037324", "افراح رشيد محمد حيدر", "فكرة جواد مفتاح", "1995-05-23", "199541787207", "بكالوريوس", "2019", "جامعة تكريت", "2021-05-04", "صيدلي", "ممارس", "الدرجة الخامسة", "المرحلة الاولى", "صيدلي مقيم اقدم", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["148039700", "اية ناظم مهدي صالح", "وداد حمزة علي", "1996-08-24", "199643604147", "بكالوريوس", "2019", "جامعة تكريت", "2021-05-04", "صيدلي", "ممارس", "الدرجة الخامسة", "المرحلة الاولى", "صيدلي مقيم اقدم", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["148054774", "فاطمة موفق فاتح طه", "كلشن اسماعيل محمد", "1993-04-08", "199314020556", "بكالوريوس", "2018", "جامعة فيلادلفيا الاردن", "2021-05-04", "صيدلي", "ممارس", "الدرجة السادسة", "المرحلة الرابعة", "صيدلي عمومي", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144511215", "ايمان نوزاد علي محمود", "نورهان حسين احمد", "1992-01-01", "199215277956", "بكالوريوس", "2015", "جامعة تكريت", "2016-04-17", "صيدلي", "ممارس", "الدرجة الرابعة", "المرحلة الاولى", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["148047659", "سارة موفق فاتح طه", "كلشن اسماعيل محمد", "1995-12-16", "199567939364", "بكالوريوس", "2019", "جامعة فيلادلفيا الاردن", "2021-05-04", "صيدلي", "ممارس", "الدرجة السادسة", "المرحلة الخامسة", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"],
+        ["144549472", "دنيز عبدالعزيز محمد حيدر", "ساجدة خورشيد عمر", "1986-07-14", "198638056569", "بكالوريوس", "2009", "جامعة تكريت", "2010-02-16", "صيدلي", "ممارس", "الدرجة الثانية", "المرحلة الاولى", "صيدلي ممارس", "صيدلي ممارس", "من ملاكات وزارة الصحة", "منسب الى مؤسسة خارج الدائرة"],
+        ["148051410", "صهيب احمد عباس فرحان", "وطفه نامق ابراهيم", "1994-01-17", "199422118337", "بكالوريوس", "2019", "جامعة راجيف غاندي الهند", "2021-05-02", "صيدلي", "ممارس", "الدرجة السابعة", "المرحلة الرابعة", "صيدلي عمومي", "صيدلي ممارس", "من ملاكات وزارة الصحة", "مستمر بالخدمة"]
+    ];
+
+    function convertRawRowToEmployee(row, idx) {
+        const empId = String(row[0] ?? '0').trim();
+        const fullName = String(row[1] ?? '').trim();
+        const motherName = String(row[2] ?? '').trim();
+        const birthDate = String(row[3] ?? '').trim();
+        const nationalId = String(row[4] ?? '0').trim();
+        const lastCert = String(row[5] ?? '').trim();
+        const gradDate = String(row[6] ?? '').trim();
+        const university = String(row[7] ?? '').trim();
+        const hireDate = String(row[8] ?? '').trim();
+        const rawProfession = String(row[9] ?? '').trim();
+        const hierarchyType = String(row[10] ?? '').trim();
+        const grade = String(row[11] ?? '').trim();
+        const stage = String(row[12] ?? '').trim();
+        const jobTitle = String(row[13] ?? '').trim();
+        const specialtyBranch = String(row[14] ?? '').trim();
+        const staffType = String(row[15] ?? 'من ملاكات وزارة الصحة').trim();
+        const empStatus = String(row[16] ?? 'مستمر بالخدمة').trim();
+
+        const category = mapProfessionToCategory(rawProfession, jobTitle, specialtyBranch);
+        const gender = inferGenderFromName(fullName, jobTitle);
+
+        return {
+            _uid: `malak_${idx + 1}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+            empId,
+            fullName,
+            motherName,
+            gender,
+            birthDate,
+            governorate: 'كركوك',
+            nationalId,
+            gradDate,
+            university,
+            hireDate,
+            category,
+            hierarchyType,
+            grade,
+            stage,
+            jobTitle,
+            specialtyBranch,
+            subSpecialty: lastCert || specialtyBranch,
+            assignedDept: specialtyBranch || category,
+            staffType,
+            empStatus,
+            position: 'لا يوجد',
+            notes: lastCert ? `آخر شهادة: ${lastCert}` : '-',
+            deductedPoints: 0
+        };
+    }
+
+    function buildDefaultMalakDatabase() {
+        return RAW_MALAK_ROWS.map((row, idx) => convertRawRowToEmployee(row, idx));
+    }
+
+    let employeesDB = [];
+    let currentCategory = 'الأطباء';
+    let currentSelectedJobTitle = '';
+    let currentSelectedUid = null;
+
+    function loadDatabase() {
+        try {
+            const savedData = localStorage.getItem(STORAGE_KEY_EMPLOYEES);
+            if (savedData) {
+                employeesDB = JSON.parse(savedData);
+                employeesDB.forEach((e, i) => {
+                    if (!e._uid) e._uid = `emp_${i + 1}_${Date.now()}`;
+                });
+            } else {
+                employeesDB = buildDefaultMalakDatabase();
+                saveDatabaseToStorage();
+            }
+            updateDatasetButtonLabel();
+        } catch (err) {
+            console.error('Error loading localStorage database:', err);
+            employeesDB = buildDefaultMalakDatabase();
+        }
+    }
+
+    function saveDatabaseToStorage() {
+        try {
+            localStorage.setItem(STORAGE_KEY_EMPLOYEES, JSON.stringify(employeesDB));
+        } catch (err) {
+            console.error('Error saving to localStorage:', err);
+        }
+    }
+
+    function updateDatasetButtonLabel() {
+        const label = document.getElementById('datasetModeLabel');
+        if (label) {
+            label.textContent = `إجمالي ملاك المستشفى: (${employeesDB.length}) موظف`;
+        }
+    }
+
+    function parseCSVLine(line) {
+        const result = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') {
+                if (inQuotes && line[i + 1] === '"') {
+                    cur += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (ch === ',' && !inQuotes) {
+                result.push(cur.trim());
+                cur = '';
+            } else {
+                cur += ch;
+            }
+        }
+        result.push(cur.trim());
+        return result;
+    }
+
+    function handleCSVFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const text = e.target.result;
+                const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+                if (lines.length < 2) {
+                    showToast('ملف CSV فارغ أو غير صالح', 'warning');
+                    return;
+                }
+
+                const importedEmployees = [];
+                const startIdx = (lines[0].includes('الرقم') || lines[0].includes('اسم')) ? 1 : 0;
+
+                for (let i = startIdx; i < lines.length; i++) {
+                    const cols = parseCSVLine(lines[i]);
+                    if (cols.length < 2 || !cols[1]) continue;
+                    importedEmployees.push(convertRawRowToEmployee(cols, importedEmployees.length));
+                }
+
+                if (importedEmployees.length === 0) {
+                    showToast('لم يتم العثور على سجلات موظفين صالحة في الملف', 'warning');
+                    return;
+                }
+
+                employeesDB = importedEmployees;
+                saveDatabaseToStorage();
+                updateDatasetButtonLabel();
+
+                const firstEmp = employeesDB[0];
+                currentCategory = firstEmp.category || 'الأطباء';
+                renderKPIsAndTabs();
+                renderRightStatisticsColumn();
+                executeSearch();
+                loadEmployeeIntoForm(firstEmp._uid);
+
+                showToast(`تم استيراد (${importedEmployees.length}) موظف من ملف الملاك بنجاح!`, 'success');
+            } catch (err) {
+                console.error('CSV Import Error:', err);
+                showToast('حدث خطأ أثناء قراءة ملف CSV', 'warning');
+            }
+            event.target.value = '';
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    function calculateLeaveBalance(hireDateStr, deductedPoints = 0) {
+        if (!hireDateStr) {
+            return { monthsElapsed: 0, totalEarned: 0, deducted: deductedPoints || 0, netAvailable: 0 };
+        }
+
+        const hireDate = new Date(hireDateStr + 'T00:00:00');
+        const today = new Date();
+
+        if (isNaN(hireDate.getTime()) || hireDate > today) {
+            return { monthsElapsed: 0, totalEarned: 0, deducted: deductedPoints || 0, netAvailable: -(deductedPoints || 0) };
+        }
+
+        let months = (today.getFullYear() - hireDate.getFullYear()) * 12 + (today.getMonth() - hireDate.getMonth());
+        if (today.getDate() < hireDate.getDate()) {
+            months--;
+        }
+        months = Math.max(0, months);
+
+        const totalEarned = months * 3;
+        const deducted = Number(deductedPoints) || 0;
+        const netAvailable = totalEarned - deducted;
+
+        return {
+            monthsElapsed: months,
+            totalEarned,
+            deducted,
+            netAvailable
+        };
+    }
+
+    function updateLeaveBalancePreview() {
+        const hireDateStr = document.getElementById('hireDate').value;
+        const emp = employeesDB.find(e => e._uid === currentSelectedUid);
+        const deducted = emp ? (Number(emp.deductedPoints) || 0) : 0;
+
+        const stats = calculateLeaveBalance(hireDateStr, deducted);
+
+        document.getElementById('leaveMonthsElapsed').textContent = stats.monthsElapsed;
+        document.getElementById('leaveTotalEarned').textContent = stats.totalEarned;
+        document.getElementById('leaveDeductedDisplay').textContent = stats.deducted;
+
+        const netEl = document.getElementById('leaveNetAvailable');
+        netEl.textContent = stats.netAvailable;
+        if (stats.netAvailable < 0) {
+            netEl.className = 'text-lg font-black text-red-600 px-2 py-0.5 rounded bg-red-50';
+        } else {
+            netEl.className = 'text-lg font-black text-[#198754] px-2 py-0.5 rounded bg-emerald-50';
+        }
+    }
+
+    function applyLeaveDeduction(pointsToDeduct) {
+        const empIndex = employeesDB.findIndex(e => e._uid === currentSelectedUid);
+        if (empIndex === -1) {
+            showToast('يرجى حفظ الموظف أو اختيار موظف مسجل أولاً لتطبيق خصم الإجازة', 'warning');
+            return;
+        }
+
+        const amount = Number(pointsToDeduct);
+        if (isNaN(amount) || amount <= 0) {
+            showToast('يرجى إدخال عدد نقاط صحيح للخصم', 'warning');
+            return;
+        }
+
+        employeesDB[empIndex].deductedPoints = (Number(employeesDB[empIndex].deductedPoints) || 0) + amount;
+        saveDatabaseToStorage();
+        updateLeaveBalancePreview();
+        showToast(`تم خصم (${amount}) نقطة من رصيد إجازات الموظف (${employeesDB[empIndex].fullName})`, 'success');
+    }
+
+    function applyCustomLeaveDeduction() {
+        const inputVal = Number(document.getElementById('customDeductInput').value);
+        applyLeaveDeduction(inputVal);
+    }
+
+    function resetLeaveDeductions() {
+        const empIndex = employeesDB.findIndex(e => e._uid === currentSelectedUid);
+        if (empIndex === -1) return;
+
+        employeesDB[empIndex].deductedPoints = 0;
+        saveDatabaseToStorage();
+        updateLeaveBalancePreview();
+        showToast(`تم تصفير الإجازات المستهلكة للموظف (${employeesDB[empIndex].fullName})`, 'info');
+    }
+
+    function renderKPIsAndTabs() {
+        const kpiContainer = document.getElementById('kpiGridContainer');
+        const tabsContainer = document.getElementById('categoryTabsContainer');
+
+        kpiContainer.innerHTML = '';
+        tabsContainer.innerHTML = '';
+
+        CATEGORIES_CONFIG.forEach((cat) => {
+            const count = employeesDB.filter(e => e.category === cat.id).length;
+            const isActive = currentCategory === cat.id;
+
+            const card = document.createElement('div');
+            card.className = `kpi-card ${isActive ? 'active-kpi' : ''}`;
+            card.onclick = () => selectCategory(cat.id);
+            card.innerHTML = `
+                <div class="text-right">
+                    <div class="text-xs sm:text-sm font-extrabold text-[#0b2545] mb-0.5">${cat.label}</div>
+                    <div class="text-xl sm:text-2xl font-black text-[#198754] leading-none">${count}</div>
+                </div>
+                <div class="w-11 h-11 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-[#0b2545] text-2xl">
+                    <i class="${cat.icon}"></i>
+                </div>
+            `;
+            kpiContainer.appendChild(card);
+
+            const tab = document.createElement('button');
+            tab.type = 'button';
+            tab.className = `cat-tab ${isActive ? 'active' : ''}`;
+            tab.onclick = () => selectCategory(cat.id);
+            tab.innerHTML = `
+                <i class="${cat.icon} text-sm"></i>
+                <span>${cat.label}</span>
+            `;
+            tabsContainer.appendChild(tab);
+        });
+    }
+
+    function selectCategory(categoryId) {
+        currentCategory = categoryId;
+        renderKPIsAndTabs();
+        renderRightStatisticsColumn();
+        executeSearch();
+    }
+
+    function renderRightStatisticsColumn() {
+        const deptEmployees = employeesDB.filter(e => e.category === currentCategory);
+        document.getElementById('statDeptName').textContent = currentCategory;
+        document.getElementById('statDeptTotal').textContent = deptEmployees.length;
+
+        const titleCountsMap = {};
+        deptEmployees.forEach(emp => {
+            const title = (emp.jobTitle || 'غير محدد').trim();
+            titleCountsMap[title] = (titleCountsMap[title] || 0) + 1;
+        });
+
+        const sortedTitles = Object.entries(titleCountsMap).sort((a, b) => b[1] - a[1]);
+
+        const tbody = document.getElementById('jobTitlesTableBody');
+        tbody.innerHTML = '';
+
+        if (sortedTitles.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" class="text-slate-400 py-4">لا يوجد موظفون في هذا القسم حالياً</td></tr>`;
+            currentSelectedJobTitle = '';
+            renderJobTitleEmployeesList();
+            return;
+        }
+
+        if (!titleCountsMap[currentSelectedJobTitle]) {
+            currentSelectedJobTitle = sortedTitles[0][0];
+        }
+
+        sortedTitles.forEach(([title, count], index) => {
+            const tr = document.createElement('tr');
+            if (title === currentSelectedJobTitle) {
+                tr.className = 'selected-row';
+            }
+            tr.onclick = () => {
+                currentSelectedJobTitle = title;
+                renderRightStatisticsColumn();
+            };
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${title}</td>
+                <td class="font-bold text-[#0b2545]">${count}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        renderJobTitleEmployeesList();
+    }
+
+    function renderJobTitleEmployeesList() {
+        document.getElementById('selectedJobTitleHeader').textContent = currentSelectedJobTitle || 'الكل';
+        const listEl = document.getElementById('jobTitleEmployeesList');
+        listEl.innerHTML = '';
+
+        const matchingEmployees = employeesDB.filter(
+            e => e.category === currentCategory && (currentSelectedJobTitle ? e.jobTitle === currentSelectedJobTitle : true)
+        );
+
+        if (matchingEmployees.length === 0) {
+            listEl.innerHTML = `<li class="py-4 text-slate-400 text-xs">لا يوجد موظفون بهذا العنوان</li>`;
+            return;
+        }
+
+        matchingEmployees.forEach(emp => {
+            const li = document.createElement('li');
+            const isSelected = emp._uid === currentSelectedUid;
+            li.className = `py-1.5 px-3 cursor-pointer transition hover:bg-blue-50 flex items-center justify-between ${
+                isSelected ? 'bg-[#d0e2ff] text-[#0b2545] font-extrabold' : 'text-slate-700'
+            }`;
+            li.onclick = () => loadEmployeeIntoForm(emp._uid);
+            li.innerHTML = `
+                <span class="mx-auto">${emp.fullName}</span>
+                <span class="text-[11px] text-slate-500 font-mono">#${emp.empId}</span>
+            `;
+            listEl.appendChild(li);
+        });
+    }
+
+    function ensureSelectHasValue(selectId, value) {
+        if (!value) return;
+        const selectEl = document.getElementById(selectId);
+        if (!selectEl) return;
+        const exists = Array.from(selectEl.options).some(opt => opt.value === value);
+        if (!exists) {
+            const opt = document.createElement('option');
+            opt.value = value;
+            opt.textContent = value;
+            selectEl.appendChild(opt);
+        }
+        selectEl.value = value;
+    }
+
+    function loadEmployeeIntoForm(uidOrEmpId) {
+        let emp = employeesDB.find(e => e._uid === String(uidOrEmpId));
+        if (!emp) {
+            emp = employeesDB.find(e => e.empId === String(uidOrEmpId));
+        }
+        if (!emp) return;
+
+        currentSelectedUid = emp._uid;
+
+        if (emp.category && emp.category !== currentCategory) {
+            currentCategory = emp.category;
+            currentSelectedJobTitle = emp.jobTitle;
+            renderKPIsAndTabs();
+        } else if (emp.jobTitle) {
+            currentSelectedJobTitle = emp.jobTitle;
+        }
+
+        document.getElementById('empId').value = emp.empId ?? '';
+        document.getElementById('fullName').value = emp.fullName || '';
+        document.getElementById('motherName').value = emp.motherName || '';
+        document.getElementById('gender').value = emp.gender || 'ذكر';
+        document.getElementById('birthDate').value = emp.birthDate || '';
+        document.getElementById('governorate').value = emp.governorate || 'كركوك';
+        document.getElementById('nationalId').value = emp.nationalId ?? '';
+        document.getElementById('gradDate').value = emp.gradDate || '';
+        document.getElementById('university').value = emp.university || '';
+        document.getElementById('hireDate').value = emp.hireDate || '';
+
+        ensureSelectHasValue('category', emp.category || 'الأطباء');
+        document.getElementById('hierarchyType').value = emp.hierarchyType || '';
+        document.getElementById('grade').value = emp.grade || '';
+        document.getElementById('stage').value = emp.stage || '';
+        document.getElementById('jobTitle').value = emp.jobTitle || '';
+        document.getElementById('specialtyBranch').value = emp.specialtyBranch || '';
+        document.getElementById('subSpecialty').value = emp.subSpecialty || '';
+        document.getElementById('assignedDept').value = emp.assignedDept || '';
+        ensureSelectHasValue('staffType', emp.staffType || 'من ملاكات وزارة الصحة');
+        ensureSelectHasValue('empStatus', emp.empStatus || 'مستمر بالخدمة');
+        document.getElementById('position').value = emp.position || 'لا يوجد';
+        document.getElementById('notes').value = emp.notes || '-';
+
+        document.getElementById('formModeIndicator').textContent = 'عرض / تعديل بيانات موظف';
+        document.getElementById('currentEmpBadge').textContent = `الرقم الوظيفي: ${emp.empId}`;
+
+        updateLeaveBalancePreview();
+        renderRightStatisticsColumn();
+        highlightSearchResultRow(emp._uid);
+    }
+
+    function handleSearchTypeChange() {
+        const searchType = document.getElementById('searchType').value;
+        const searchInput = document.getElementById('searchInput');
+        if (searchType === 'id') {
+            searchInput.placeholder = 'اكتب الرقم الوظيفي هنا (مثال: 144449820)...';
+        } else {
+            searchInput.placeholder = 'اكتب اسم الموظف هنا...';
+        }
+        executeSearch();
+    }
+
+    function executeSearch() {
+        const searchType = document.getElementById('searchType').value;
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const searchAll = document.getElementById('searchAllDeptsCheckbox').checked;
+
+        const results = employeesDB.filter(emp => {
+            if (!searchAll && emp.category !== currentCategory) {
+                return false;
+            }
+            if (!query) {
+                return searchAll ? true : emp.category === currentCategory;
+            }
+
+            if (searchType === 'id') {
+                return String(emp.empId).toLowerCase().includes(query);
+            } else {
+                return (emp.fullName || '').toLowerCase().includes(query);
+            }
+        });
+
+        document.getElementById('searchResultsCount').textContent = results.length;
+        const tbody = document.getElementById('searchResultsTableBody');
+        tbody.innerHTML = '';
+
+        if (results.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="2" class="py-6 text-slate-400 text-xs">لا توجد نتائج مطابقة للبحث</td></tr>`;
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        results.forEach((emp, idx) => {
+            const tr = document.createElement('tr');
+            tr.dataset.uid = emp._uid;
+            if (emp._uid === currentSelectedUid) {
+                tr.className = 'selected-row';
+            }
+            tr.onclick = () => loadEmployeeIntoForm(emp._uid);
+            tr.ondblclick = () => loadEmployeeIntoForm(emp._uid);
+
+            tr.innerHTML = `
+                <td>${idx + 1}</td>
+                <td class="text-right pr-3">
+                    <div class="flex items-center justify-between gap-1">
+                        <span>${emp.fullName}</span>
+                        <span class="text-[11px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">${emp.empId}</span>
+                    </div>
+                </td>
+            `;
+            fragment.appendChild(tr);
+        });
+        tbody.appendChild(fragment);
+    }
+
+    function highlightSearchResultRow(uid) {
+        const rows = document.querySelectorAll('#searchResultsTableBody tr');
+        rows.forEach(r => {
+            if (r.dataset.uid === String(uid)) {
+                r.classList.add('selected-row');
+            } else {
+                r.classList.remove('selected-row');
+            }
+        });
+    }
+
+    function resetSearch() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchType').value = 'name';
+        handleSearchTypeChange();
+        showToast('تمت إعادة ضبط البحث', 'info');
+    }
+
+    function prepareNewEmployee() {
+        clearFormInputs();
+        document.getElementById('empId').value = '0';
+        document.getElementById('category').value = currentCategory;
+        document.getElementById('governorate').value = 'كركوك';
+        document.getElementById('hireDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('staffType').value = 'من ملاكات وزارة الصحة';
+        document.getElementById('empStatus').value = 'مستمر بالخدمة';
+        document.getElementById('position').value = 'لا يوجد';
+        document.getElementById('notes').value = '-';
+
+        currentSelectedUid = null;
+        document.getElementById('formModeIndicator').textContent = 'إضافة موظف جديد';
+        document.getElementById('currentEmpBadge').textContent = 'موظف جديد';
+        updateLeaveBalancePreview();
+        document.getElementById('fullName').focus();
+        showToast('تم تجهيز الاستمارة لإضافة موظف جديد', 'info');
+    }
+
+    function clearFormInputs() {
+        const form = document.getElementById('employeeForm');
+        form.reset();
+        document.getElementById('leaveMonthsElapsed').textContent = '0';
+        document.getElementById('leaveTotalEarned').textContent = '0';
+        document.getElementById('leaveDeductedDisplay').textContent = '0';
+        document.getElementById('leaveNetAvailable').textContent = '0';
+    }
+
+    function handleCategoryFieldChange() {
+        const selectedCat = document.getElementById('category').value;
+        if (selectedCat === 'الأطباء') document.getElementById('hierarchyType').value = 'اختصاص';
+        else if (selectedCat === 'التمريض') document.getElementById('hierarchyType').value = 'ممارس';
+        else document.getElementById('hierarchyType').value = 'ممارس';
+    }
+
+    function saveEmployee() {
+        const empId = document.getElementById('empId').value.trim() || '0';
+        const fullName = document.getElementById('fullName').value.trim();
+        const jobTitle = document.getElementById('jobTitle').value.trim();
+        const hireDate = document.getElementById('hireDate').value;
+
+        if (!fullName || !jobTitle || !hireDate) {
+            showToast('يرجى ملء الحقول الأساسية: اسم الموظف، العنوان الوظيفي، وتاريخ التعيين', 'warning');
+            return;
+        }
+
+        const existingIndex = currentSelectedUid
+            ? employeesDB.findIndex(e => e._uid === currentSelectedUid)
+            : -1;
+
+        const existingDeducted = existingIndex !== -1 ? (employeesDB[existingIndex].deductedPoints || 0) : 0;
+        const uid = existingIndex !== -1
+            ? employeesDB[existingIndex]._uid
+            : `malak_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+
+        const employeeRecord = {
+            _uid: uid,
+            empId,
+            fullName,
+            motherName: document.getElementById('motherName').value.trim(),
+            gender: document.getElementById('gender').value,
+            birthDate: document.getElementById('birthDate').value,
+            governorate: document.getElementById('governorate').value.trim() || 'كركوك',
+            nationalId: document.getElementById('nationalId').value.trim() || '0',
+            gradDate: document.getElementById('gradDate').value.trim(),
+            university: document.getElementById('university').value.trim(),
+            hireDate,
+            category: document.getElementById('category').value,
+            hierarchyType: document.getElementById('hierarchyType').value.trim(),
+            grade: document.getElementById('grade').value.trim(),
+            stage: document.getElementById('stage').value.trim(),
+            jobTitle,
+            specialtyBranch: document.getElementById('specialtyBranch').value.trim(),
+            subSpecialty: document.getElementById('subSpecialty').value.trim(),
+            assignedDept: document.getElementById('assignedDept').value.trim(),
+            staffType: document.getElementById('staffType').value,
+            empStatus: document.getElementById('empStatus').value,
+            position: document.getElementById('position').value.trim() || 'لا يوجد',
+            notes: document.getElementById('notes').value.trim() || '-',
+            deductedPoints: existingDeducted
+        };
+
+        if (existingIndex !== -1) {
+            employeesDB[existingIndex] = employeeRecord;
+            showToast(`تم تحديث بيانات الموظف (${fullName}) بنجاح`, 'success');
+        } else {
+            employeesDB.unshift(employeeRecord);
+            showToast(`تمت إضافة الموظف الجديد (${fullName}) بنجاح`, 'success');
+        }
+
+        currentSelectedUid = uid;
+        currentCategory = employeeRecord.category;
+        currentSelectedJobTitle = employeeRecord.jobTitle;
+
+        saveDatabaseToStorage();
+        updateDatasetButtonLabel();
+        renderKPIsAndTabs();
+        renderRightStatisticsColumn();
+        executeSearch();
+        loadEmployeeIntoForm(uid);
+    }
+
+    function confirmDeleteEmployee() {
+        const emp = employeesDB.find(e => e._uid === currentSelectedUid);
+        if (!emp) {
+            showToast('يرجى تحديد موظف أولاً لحذفه', 'warning');
+            return;
+        }
+
+        openCustomModal(
+            'تأكيد حذف الموظف',
+            `هل أنت متأكد من حذف بيانات الموظف "${emp.fullName}" (الرقم الوظيفي: ${emp.empId}) نهائياً من قاعدة البيانات؟`,
+            () => {
+                employeesDB = employeesDB.filter(e => e._uid !== emp._uid);
+                saveDatabaseToStorage();
+                updateDatasetButtonLabel();
+                showToast(`تم حذف الموظف (${emp.fullName}) بنجاح`, 'info');
+
+                const nextEmp = employeesDB.find(e => e.category === currentCategory) || employeesDB[0];
+                if (nextEmp) {
+                    loadEmployeeIntoForm(nextEmp._uid);
+                } else {
+                    prepareNewEmployee();
+                }
+                renderKPIsAndTabs();
+                renderRightStatisticsColumn();
+                executeSearch();
+            }
+        );
+    }
+
+    function printEmployeeProfile() {
+        const empId = document.getElementById('empId').value.trim();
+        const fullName = document.getElementById('fullName').value.trim();
+        if (!fullName) {
+            showToast('يرجى اختيار موظف لطباعة استمارته', 'warning');
+            return;
+        }
+
+        const emp = employeesDB.find(e => e._uid === currentSelectedUid) || {};
+        const leave = calculateLeaveBalance(document.getElementById('hireDate').value, emp.deductedPoints || 0);
+
+        const printArea = document.getElementById('printArea');
+        printArea.innerHTML = `
+            <div style="border: 3px solid #0b2545; border-radius: 12px; padding: 24px; font-family: 'Cairo', sans-serif;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0b2545; padding-bottom: 14px; margin-bottom: 20px;">
+                    <div>
+                        <h1 style="margin: 0; font-size: 20px; color: #0b2545;">مستشفى النسائية والأطفال</h1>
+                        <p style="margin: 4px 0 0; font-size: 14px; color: #475569;">بنك معلومات الملاكات - بطاقة البيانات الوظيفية</p>
+                    </div>
+                    <div style="text-align: left; font-size: 13px; color: #334155;">
+                        <div><strong>الرقم الوظيفي:</strong> ${empId}</div>
+                        <div><strong>تاريخ الطباعة:</strong> ${new Date().toLocaleDateString('ar-IQ')}</div>
+                    </div>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+                    <tbody>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold; width: 22%;">اسم الموظف الرباعي</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; width: 28%;">${fullName}</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold; width: 22%;">المهنة / القسم</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; width: 28%;">${document.getElementById('category').value}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">اسم الأم الثلاثي</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('motherName').value}</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">العنوان الوظيفي</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('jobTitle').value}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">الجنس / التولد</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('gender').value} (${document.getElementById('birthDate').value})</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">الدرجة والمرحلة</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('grade').value} - ${document.getElementById('stage').value}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">المحافظة / البطاقة الوطنية</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('governorate').value} - ${document.getElementById('nationalId').value}</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">فرع الاختصاص / الشهادة</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('specialtyBranch').value} / ${document.getElementById('subSpecialty').value}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">الجهة المانحة للشهادة</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('university').value} (${document.getElementById('gradDate').value})</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">موزع بعد الاختصاص</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('assignedDept').value}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">تاريخ التعيين</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;">${document.getElementById('hireDate').value}</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">نوع الملاك / الحالة</td>
+                            <td style="padding: 8px; border: 1px solid #cbd5e1;">${document.getElementById('staffType').value} - ${document.getElementById('empStatus').value}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="border: 2px solid #198754; border-radius: 8px; padding: 14px; background: #f0fdf4;">
+                    <h3 style="margin: 0 0 8px; color: #0b2545; font-size: 16px;">خلاصة رصيد الإجازات التراكمي (3 نقاط لكل شهر خدمة)</h3>
+                    <div style="display: flex; justify-content: space-around; font-size: 14px;">
+                        <div>عدد الأشهر المكتملة: <strong>${leave.monthsElapsed} شهر</strong></div>
+                        <div>الرصيد المكتسب الكلي: <strong>${leave.totalEarned} نقطة</strong></div>
+                        <div>الرصيد المستهلك: <strong>${leave.deducted} نقطة</strong></div>
+                        <div style="color: #198754; font-size: 16px;"><strong>الرصيد المتبقي الفعلي: ${leave.netAvailable} يوم</strong></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        window.print();
+    }
+
+    function openCustomModal(title, message, onConfirm) {
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = message;
+        const modal = document.getElementById('customModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        confirmBtn.onclick = () => {
+            closeCustomModal();
+            if (typeof onConfirm === 'function') onConfirm();
+        };
+    }
+
+    function closeCustomModal() {
+        const modal = document.getElementById('customModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function openCloseSystemModal() {
+        openCustomModal(
+            'إغلاق النظام',
+            'تم حفظ جميع التعديلات تلقائياً في المتصفح (localStorage). هل ترغب في إعادة ضبط الجلسة الحالية؟',
+            () => {
+                resetSearch();
+                if (employeesDB.length > 0) {
+                    loadEmployeeIntoForm(employeesDB[0]._uid);
+                }
+                showToast('تم حفظ البيانات وإغلاق الجلسة الحالية بأمان', 'success');
+            }
+        );
+    }
+
+    function resetToDefaultDatabase() {
+        openCustomModal(
+            'استعادة بيانات الملاك الأصلية',
+            'هل ترغب في استعادة قاعدة بيانات ملف الملاك الأصلية ومسح التعديلات اليدوية؟',
+            () => {
+                localStorage.removeItem(STORAGE_KEY_EMPLOYEES);
+                loadDatabase();
+                const firstDoc = employeesDB.find(e => e.category === 'الأطباء') || employeesDB[0];
+                if (firstDoc) {
+                    selectCategory(firstDoc.category);
+                    loadEmployeeIntoForm(firstDoc._uid);
+                }
+                showToast('تمت استعادة قاعدة بيانات الملاك الأصلية بنجاح', 'success');
+            }
+        );
+    }
+
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+
+        const colorMap = {
+            success: 'bg-[#198754] border-emerald-700 text-white',
+            warning: 'bg-amber-600 border-amber-700 text-white',
+            info: 'bg-[#0b2545] border-blue-900 text-white'
+        };
+
+        const iconMap = {
+            success: 'fa-circle-check',
+            warning: 'fa-circle-exclamation',
+            info: 'fa-circle-info'
+        };
+
+        toast.className = `${colorMap[type] || colorMap.info} border px-4 py-2.5 rounded-lg shadow-lg text-xs font-bold flex items-center gap-2.5 transition-all duration-300 pointer-events-auto`;
+        toast.innerHTML = `
+            <i class="fa-solid ${iconMap[type] || iconMap.info} text-sm"></i>
+            <span>${message}</span>
+        `;
+
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(10px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3200);
+    }
+
+    function updateClockAndDate() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'م' : 'ص';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const hoursStr = String(hours).padStart(2, '0');
+
+        document.getElementById('liveClockDisplay').textContent = `${hoursStr}:${minutes}:${seconds} ${ampm}`;
+
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        document.getElementById('liveDateDisplay').textContent = `${day}/${month}/${year}`;
+    }
+
+    window.onload = function () {
+        loadDatabase();
+        const initialEmp = employeesDB.find(e => e.category === 'الأطباء') || employeesDB[0];
+        if (initialEmp) {
+            currentCategory = initialEmp.category;
+        }
+        renderKPIsAndTabs();
+        renderRightStatisticsColumn();
+        executeSearch();
+        if (initialEmp) {
+            loadEmployeeIntoForm(initialEmp._uid);
+        }
+        updateClockAndDate();
+        setInterval(updateClockAndDate, 1000);
+    };
+</script>
+</body>
+</html>
